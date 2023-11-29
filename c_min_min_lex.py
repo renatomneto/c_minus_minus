@@ -61,11 +61,13 @@ tokens = [
     'RESTO_DIVISAO',
     'POTENCIACAO',
     'ABRE_PARENTESES',
-    'FECHA_PARENTESES'
+    'FECHA_PARENTESES',
+    'TIPO', 
+    'ASPAS'
 ] + list(reserved.values()) # adiciona os tokens das palavras reservadas
 
 # regex para os tokens
-# t_MAIN_START = r'main'
+t_MAIN = r'\bmain\b'
 t_FIM_BLOCO = r';'
 t_SOMA = r'\+'
 t_SUBTRACAO = r'-'
@@ -75,11 +77,11 @@ t_RESTO_DIVISAO = r'%'
 t_POTENCIACAO = r'\^'
 t_ATRIBUICAO = r'='
 t_INICIO_BLOCO = r':'
-t_SEPARADOR = r'.'
+t_SEPARADOR = r'\.'
 # t_BLOCK_START = r'{'
 # t_BLOCK_END = r'}'
 t_ABRE_PARENTESES = r'\('
-t_FECHA_PARENTESESD = r'\)'
+t_FECHA_PARENTESES = r'\)'
 t_VIRGULA = r','
 # t_LIT_INT = r'-?\d+'
 # t_LIT_FLOAT = r'-?\d+.\d+'
@@ -100,23 +102,23 @@ t_CHAR = r'\bCHAR\b'
 t_INT = r'\bINT\b'
 t_REAL = r'\bREAL\b'
 t_BOOL = r'\bBOOL\b'
-t_LETRA = r'[a-zA-Z_-]'
-t_PALAVRA = r'[a-zA-Z][a-zA-Z_-]+'
+t_LETRA = r"'\w'"
+# t_PALAVRA = r'[a-zA-Z][a-zA-Z_-]+'
 t_DIGITO = r'[0-9]'
+t_ASPAS = r'\"'
 t_NUMERO_INTEIRO = t_SUBTRACAO + r'*' + t_DIGITO + r'+'
 t_TIPO = t_BOOL + r'|' + t_CHAR + r'|' + t_INT + r'|' + t_REAL
 t_NUMERO_REAL = t_NUMERO_INTEIRO + t_SEPARADOR + t_DIGITO + r'+'
+# t_VARIAVEL = t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
 
 
-#exemplo regex: \bREAL\b (([a-zA-Z][a-zA-Z_-])+|[a-zA-Z_-])([0-9]|[a-zA-Z_-])*        --->  reconhece o nome de uma variavel real
 def t_VARIAVEL(t):
-    t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
-    t.type = reserved.get(t.value, 'VAR')
+    r'[a-zA-Z]+([a-zA-Z_-]|[0-9])*' 
+    t.type = reserved.get(t.value, 'VARIAVEL')
 
     return t
 
-
-# t_ignore = ' \t'
+t_ignore = ' \t'
 
 
 def t_newline(t):
@@ -132,39 +134,15 @@ def t_error(t):
 # constroi o analisador lexico
 lexer = lex.lex()
 
-# entrada de teste para output de string comum
-data0 = '''
-    main {
-        output("Hello");
-        output("World");
-    }
-'''
-
-# entrada de teste para decl attr e output de variavel inteiras
+# TESTE 1 -> Declarando varaiveis
 data1 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3;
-    output(variavel_int);
-    const constante_int: int = 2;
-    output(constante_int);
-    let variavel_int2: int = 5;
-    output(variavel_int2);
-}
-'''
-
-# entrada de teste para decl attr e output de variavel float
-data2 = '''
-main {
-    let variavel_float: float;
-    variavel_float = 3;
-    output(variavel_float);
-    const constante_float: float = 2.0;
-    output(constante_float);
-    let variavel_float2: float;
-    input(variavel_float2);
-    output(variavel_float2);
-}
+main:
+    INT var1 = 1
+    REAL var2 = 1.0
+    BOOL var3 = true
+    BOOL var4 = false
+    CHAR var5 = 'a'
+    ;
 '''
 
 # entrada de teste para decl attr e output de variavel char
@@ -247,7 +225,7 @@ main {
 }
 '''
 
-lexer.input(data8)
+lexer.input(data1)
 
 while True:
     tok = lexer.token()
