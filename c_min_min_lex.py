@@ -67,41 +67,56 @@ tokens = [
 # regex para os tokens
 # t_MAIN_START = r'main'
 t_FIM_BLOCO = r';'
-t_SUM = r'\+'
-t_SUB = r'-'
-t_MULT = r'\*'
-t_DIV = r'/'
+t_SOMA = r'\+'
+t_SUBTRACAO = r'-'
+t_MULTIPLICACAO = r'\*'
+t_DIVISAO = r'/'
 t_RESTO_DIVISAO = r'%'
-t_ATTR = r'='
-t_COLON = r':'
-t_BLOCK_START = r'{'
-t_BLOCK_END = r'}'
-t_PAR_START = r'\('
-t_PAR_END = r'\)'
-t_SEPARATOR = r','
-t_LIT_INT = r'-?\d+'
-t_LIT_FLOAT = r'-?\d+.\d+'
-t_LIT_CHAR = r"'\w'"
-t_AND = r'&&'
-t_OR = r'\|\|'
-t_NOT = r'!'
+t_POTENCIACAO = r'\^'
+t_ATRIBUICAO = r'='
+t_INICIO_BLOCO = r':'
+t_SEPARADOR = r'.'
+# t_BLOCK_START = r'{'
+# t_BLOCK_END = r'}'
+t_ABRE_PARENTESES = r'\('
+t_FECHA_PARENTESESD = r'\)'
+t_VIRGULA = r','
+# t_LIT_INT = r'-?\d+'
+# t_LIT_FLOAT = r'-?\d+.\d+'
+# t_LIT_CHAR = r"'\w'"
+t_AND = r'\band\b'
+t_OR = r'\bor\b'
+t_NOT = r'\bnot\b'
 t_EQUALS = r'=='
-t_NOT_EQUALS = r'!='
-t_GREATER = r'>'
+t_DIF = r'!='
+t_BIGGER = r'>'
 t_SMALLER = r'<'
-t_GREATER_EQUALS = r'>='
-t_SMALLER_EQUALS = r'<='
-t_ASP = r'"'
+t_BEQ = r'>='
+t_SEQ = r'<='
+# t_ASP = r'"'
+t_TRUE = r'\btrue\b'
+t_FALSE = r'\bfalse\b'
+t_CHAR = r'\bCHAR\b'
+t_INT = r'\bINT\b'
+t_REAL = r'\bREAL\b'
+t_BOOL = r'\bBOOL\b'
+t_LETRA = r'[a-zA-Z_-]'
+t_PALAVRA = r'[a-zA-Z][a-zA-Z_-]+'
+t_DIGITO = r'[0-9]'
+t_NUMERO_INTEIRO = t_SUBTRACAO + r'*' + t_DIGITO + r'+'
+t_TIPO = t_BOOL + r'|' + t_CHAR + r'|' + t_INT + r'|' + t_REAL
+t_NUMERO_REAL = t_NUMERO_INTEIRO + t_SEPARADOR + t_DIGITO + r'+'
 
 
-def t_VAR(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*'
+#exemplo regex: \bREAL\b (([a-zA-Z][a-zA-Z_-])+|[a-zA-Z_-])([0-9]|[a-zA-Z_-])*        --->  reconhece o nome de uma variavel real
+def t_VARIAVEL(t):
+    t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
     t.type = reserved.get(t.value, 'VAR')
 
     return t
 
 
-t_ignore = ' \t'
+# t_ignore = ' \t'
 
 
 def t_newline(t):
