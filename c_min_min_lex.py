@@ -63,7 +63,8 @@ tokens = [
     'ABRE_PARENTESES',
     'FECHA_PARENTESES',
     'TIPO', 
-    'ASPAS'
+    'ASPAS',
+    'TEXTO'
 ] + list(reserved.values()) # adiciona os tokens das palavras reservadas
 
 # regex para os tokens
@@ -110,7 +111,11 @@ t_NUMERO_INTEIRO = t_SUBTRACAO + r'*' + t_DIGITO + r'+'
 t_TIPO = t_BOOL + r'|' + t_CHAR + r'|' + t_INT + r'|' + t_REAL
 t_NUMERO_REAL = t_NUMERO_INTEIRO + t_SEPARADOR + t_DIGITO + r'+'
 # t_VARIAVEL = t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
+def t_TEXTO(t):
+    r'[a-zA-Z]+(([a-zA-Z_-]|[0-9])|[ ])+' 
+    t.type = reserved.get(t.value, 'TEXTO')
 
+    return t
 
 def t_VARIAVEL(t):
     r'[a-zA-Z]+([a-zA-Z_-]|[0-9])*' 
@@ -144,6 +149,14 @@ main:
     CHAR var5 = 'a'
     ;
 '''
+# TESTE 2 -> Saida com Strings
+data2 = '''
+main:
+    out("Hello World")
+    out("Com duas linhas")
+    ;
+'''
+
 
 # entrada de teste para decl attr e output de variavel char
 data3 = '''
@@ -225,7 +238,7 @@ main {
 }
 '''
 
-lexer.input(data1)
+lexer.input(data2)
 
 while True:
     tok = lexer.token()

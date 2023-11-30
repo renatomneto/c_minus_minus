@@ -64,19 +64,12 @@ def p_expr_many_no_semicolon(p):
     p[0] = p[1] + p[2] + f";\n   "
 
 
-# def p_expr_many(p):
-#     '''
-#         exprs : exprs expr SEMICOLON 
-#     '''
-#     p[0] = p[1] + p[2] + f";\n   "
-
-
-# def p_output_string(p):
-#     '''
-#     expr : OUTPUT PAR_START ASP VAR ASP PAR_END
-#     '''
-#     if len(p) == 7:
-#         p[0] = f'printf("{p[4]}\\n")'
+def p_out_string(p):
+    '''
+    expr : OUT ABRE_PARENTESES ASPAS TEXTO ASPAS FECHA_PARENTESES
+    '''
+    if len(p) == 7:
+        p[0] = f'printf("{p[4]}\\n")'
 
 
 # def p_output_var(p):
@@ -436,6 +429,15 @@ main:
     ;
 '''
 
+# TESTE 2 -> Saida com Strings
+data2 = '''
+main:
+    out("Hello World")
+    out("Com duas linhas")
+    ;
+'''
+
+
 # entrada de teste para decl attr e output de variavel char
 data3 = '''
 main {
@@ -516,4 +518,4 @@ main {
 }
 '''
 
-result = parser.parse(data1)
+result = parser.parse(data2)
