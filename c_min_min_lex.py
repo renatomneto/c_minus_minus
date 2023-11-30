@@ -79,14 +79,9 @@ t_POTENCIACAO = r'\^'
 t_ATRIBUICAO = r'='
 t_INICIO_BLOCO = r':'
 t_SEPARADOR = r'\.'
-# t_BLOCK_START = r'{'
-# t_BLOCK_END = r'}'
 t_ABRE_PARENTESES = r'\('
 t_FECHA_PARENTESES = r'\)'
 t_VIRGULA = r','
-# t_LIT_INT = r'-?\d+'
-# t_LIT_FLOAT = r'-?\d+.\d+'
-# t_LIT_CHAR = r"'\w'"
 t_AND = r'\band\b'
 t_OR = r'\bor\b'
 t_NOT = r'\bnot\b'
@@ -96,7 +91,6 @@ t_BIGGER = r'>'
 t_SMALLER = r'<'
 t_BEQ = r'>='
 t_SEQ = r'<='
-# t_ASP = r'"'
 t_TRUE = r'\btrue\b'
 t_FALSE = r'\bfalse\b'
 t_CHAR = r'\bCHAR\b'
@@ -111,15 +105,16 @@ t_NUMERO_INTEIRO = t_SUBTRACAO + r'*' + t_DIGITO + r'+'
 t_TIPO = t_BOOL + r'|' + t_CHAR + r'|' + t_INT + r'|' + t_REAL
 t_NUMERO_REAL = t_NUMERO_INTEIRO + t_SEPARADOR + t_DIGITO + r'+'
 # t_VARIAVEL = t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
-def t_TEXTO(t):
-    r'[a-zA-Z]+(([a-zA-Z_-]|[0-9])|[ ])+' 
-    t.type = reserved.get(t.value, 'TEXTO')
-
-    return t
 
 def t_VARIAVEL(t):
     r'[a-zA-Z]+([a-zA-Z_-]|[0-9])*' 
     t.type = reserved.get(t.value, 'VARIAVEL')
+
+    return t
+
+def t_TEXTO(t):
+    r'[a-zA-Z]+(([a-zA-Z_-]|[0-9])|[ ])+' 
+    t.type = reserved.get(t.value, 'TEXTO')
 
     return t
 
@@ -157,19 +152,19 @@ main:
     ;
 '''
 
-
-# entrada de teste para decl attr e output de variavel char
 data3 = '''
-main {
-    let variavel_char: char;
-    variavel_char = '3';
-    output(variavel_char);
-    const constante_char: char = 'a';
-    output(constante_char);
-    let variavel_char2: char;
-    input(variavel_char2);
-    output(variavel_char2);
-}
+main:
+    INT var1 = 1
+    REAL var2 = 1.0
+    BOOL var3 = true
+    BOOL var4 = false
+    CHAR var5 = 'a'
+    out(var1)
+    out(var2)
+    out(var3)
+    out(var4)
+    out(var5)
+    ;
 '''
 
 # entrada de teste para attr com operacao aritmetica
@@ -238,7 +233,7 @@ main {
 }
 '''
 
-lexer.input(data2)
+lexer.input(data3)
 
 while True:
     tok = lexer.token()

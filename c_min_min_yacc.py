@@ -64,6 +64,10 @@ def p_expr_many_no_semicolon(p):
     p[0] = p[1] + p[2] + f";\n   "
 
 
+# =====================================================================
+# FUNCOES PARA OUT (SAIDA)
+# =====================================================================
+
 def p_out_string(p):
     '''
     expr : OUT ABRE_PARENTESES ASPAS TEXTO ASPAS FECHA_PARENTESES
@@ -72,17 +76,19 @@ def p_out_string(p):
         p[0] = f'printf("{p[4]}\\n")'
 
 
-# def p_output_var(p):
-#     '''
-#     expr : OUTPUT PAR_START VAR PAR_END
-#     '''
-#     if (hasInArray(p[3]) != -1):
-#         if (myVariables[hasInArray(p[3])]['type'] == 'int'):
-#             p[0] = f'printf("%d\\n",{p[3]})'
-#         elif (myVariables[hasInArray(p[3])]['type'] == 'float'):
-#             p[0] = f'printf("%f\\n",{p[3]})'
-#         if (myVariables[hasInArray(p[3])]['type'] == 'char'):
-#             p[0] = f'printf("%c\\n",{p[3]})'
+def p_output_var(p):
+    '''
+    expr : OUT ABRE_PARENTESES VARIAVEL FECHA_PARENTESES
+    '''
+    if (hasInArray(p[3]) != -1):
+        if (myVariables[hasInArray(p[3])]['type'] == 'int'):
+            p[0] = f'printf("%d\\n",{p[3]})'
+        elif (myVariables[hasInArray(p[3])]['type'] == 'float'):
+            p[0] = f'printf("%f\\n",{p[3]})'
+        elif (myVariables[hasInArray(p[3])]['type'] == 'char'):
+            p[0] = f'printf("%c\\n",{p[3]})'
+        if (myVariables[hasInArray(p[3])]['type'] == 'bool'):
+            p[0] = f'printf("%s\\n", {p[3]} ? "true" : "false")' 
 
 
 # def p_input_var(p):
@@ -114,6 +120,8 @@ def p_atribuicao_int(p):
     '''
     expr : INT VARIAVEL ATRIBUICAO NUMERO_INTEIRO
     '''
+    myVariables.append(
+        {'name': p[2], 'type': 'int', 'value': None})
     if hasInArray(p[2]) != -1:
         myVariables[hasInArray(p[2])]['value'] = p[4]
     
@@ -157,6 +165,8 @@ def p_atribuicao_real(p):
     '''
     expr : REAL VARIAVEL ATRIBUICAO NUMERO_REAL
     '''
+    myVariables.append(
+        {'name': p[2], 'type': 'float', 'value': None})
     if hasInArray(p[2]) != -1:
         myVariables[hasInArray(p[2])]['value'] = p[4]
     
@@ -200,6 +210,8 @@ def p_atribuicao_char(p):
     '''
     expr : CHAR VARIAVEL ATRIBUICAO LETRA 
     '''
+    myVariables.append(
+        {'name': p[2], 'type': 'char', 'value': None})
     if hasInArray(p[2]) != -1:
         myVariables[hasInArray(p[2])]['value'] = p[4]
     
@@ -243,6 +255,8 @@ def p_atribuicao_bool_true(p):
     '''
     expr : BOOL VARIAVEL ATRIBUICAO TRUE
     '''
+    myVariables.append(
+        {'name': p[2], 'type': 'bool', 'value': None})
     if hasInArray(p[2]) != -1:
         myVariables[hasInArray(p[2])]['value'] = True
     
@@ -254,6 +268,8 @@ def p_atribuicao_bool_false(p):
     '''
     expr : BOOL VARIAVEL ATRIBUICAO FALSE
     '''
+    myVariables.append(
+        {'name': p[2], 'type': 'bool', 'value': None})
     if hasInArray(p[2]) != -1:
         myVariables[hasInArray(p[2])]['value'] = False
     
@@ -438,18 +454,20 @@ main:
 '''
 
 
-# entrada de teste para decl attr e output de variavel char
+# 
 data3 = '''
-main {
-    let variavel_char: char;
-    variavel_char = '3';
-    output(variavel_char);
-    const constante_char: char = 'a';
-    output(constante_char);
-    let variavel_char2: char;
-    input(variavel_char2);
-    output(variavel_char2);
-}
+main:
+    INT var1 = 1
+    REAL var2 = 1.0
+    BOOL var3 = true
+    BOOL var4 = false
+    CHAR var5 = 'a'
+    out(var1)
+    out(var2)
+    out(var3)
+    out(var4)
+    out(var5)
+    ;
 '''
 
 # entrada de teste para attr com operacao aritmetica
@@ -518,4 +536,4 @@ main {
 }
 '''
 
-result = parser.parse(data2)
+result = parser.parse(data3)
