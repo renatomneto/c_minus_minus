@@ -91,17 +91,17 @@ def p_output_var(p):
             p[0] = f'printf("%s\\n", {p[3]} ? "true" : "false")' 
 
 
-# def p_input_var(p):
-#     '''
-#     expr : INPUT PAR_START VAR PAR_END
-#     '''
-#     if (hasInArray(p[3]) != -1):
-#         if (myVariables[hasInArray(p[3])]['type'] == 'int'):
-#             p[0] = f'printf("Digite um valor para {p[3]}: ");\n   scanf("%d", &{p[3]})'
-#         elif (myVariables[hasInArray(p[3])]['type'] == 'float'):
-#             p[0] = f'printf("Digite um valor para {p[3]}: ");\n   scanf("%f", &{p[3]})'
-#         if (myVariables[hasInArray(p[3])]['type'] == 'char'):
-#             p[0] = f'printf("Digite um valor para {p[3]}: ");\n   scanf("%c", &{p[3]})'
+def p_input_var(p):
+    '''
+    expr : IN ABRE_PARENTESES VARIAVEL FECHA_PARENTESES
+    '''
+    if (hasInArray(p[3]) != -1):
+        if (myVariables[hasInArray(p[3])]['type'] == 'int'):
+            p[0] = f'scanf("%d", &{p[3]})'
+        elif (myVariables[hasInArray(p[3])]['type'] == 'float'):
+            p[0] = f'scanf("%f", &{p[3]})'
+        if (myVariables[hasInArray(p[3])]['type'] == 'char'):
+            p[0] = f'scanf(" %c", &{p[3]})'
 
 # =====================================================================
 # FUNCOES PARA INT
@@ -454,7 +454,7 @@ main:
 '''
 
 
-# 
+# TESTE 3 -> Saida com Variáveis
 data3 = '''
 main:
     INT var1 = 1
@@ -470,16 +470,16 @@ main:
     ;
 '''
 
-# entrada de teste para attr com operacao aritmetica
+# 
 data4 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3 + 4;
-    output(variavel_int);
-    let variavel_int2: int;
-    variavel_int2 = (variavel_int * 4) + 3;
-    output(variavel_int2);
-}
+main:
+    INT var1
+    REAL var2
+    CHAR var3
+    in(var1)
+    in(var2)
+    in(var3)
+    ;
 '''
 
 # entrada de teste para cond logical e relacional verdadeiro
@@ -536,4 +536,4 @@ main {
 }
 '''
 
-result = parser.parse(data3)
+result = parser.parse(data4)
