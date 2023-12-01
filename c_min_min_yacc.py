@@ -393,9 +393,9 @@ def p_term_real(p):
     p[0] = p[1]
 
 
-# def p_term_par_expr(p):
-#     'term : PAR_START expr PAR_END'
-#     p[0] = f'({p[2]})'
+def p_term_parenteses_expr(p):
+    'term : ABRE_PARENTESES expr FECHA_PARENTESES'
+    p[0] = f'({p[2]})'
 
 
 def p_error(t):
@@ -502,16 +502,18 @@ main:
 '''
 
 
-# entrada de teste para while
+# 
 data7 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3;
-    while(variavel_int > 0 ){
-        output(variavel_int);
-        variavel_int = variavel_int - 1;
-    }
-}
+main:
+    INT var1 = 1
+    INT var2 = 2
+    INT resultado
+    resultado = (var1+var2)
+    out(resultado)
+    INT resultado2
+    resultado2 = (var1+var2)*(var1+var2)
+    out(resultado2)
+    ;
 '''
 
 # entrada de teste para for
@@ -526,4 +528,4 @@ main {
 }
 '''
 
-result = parser.parse(data6)
+result = parser.parse(data7)
