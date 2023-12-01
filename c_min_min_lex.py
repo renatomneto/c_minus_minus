@@ -151,7 +151,7 @@ main:
     out("Com duas linhas")
     ;
 '''
-
+# TESTE 3 -> Saida com Variáveis
 data3 = '''
 main:
     INT var1 = 1
@@ -167,16 +167,16 @@ main:
     ;
 '''
 
-# entrada de teste para attr com operacao aritmetica
+# 
 data4 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3 + 4;
-    output(variavel_int);
-    let variavel_int2: int;
-    variavel_int2 = (variavel_int * 4) + 3;
-    output(variavel_int2);
-}
+main:
+    INT var1
+    REAL var2
+    CHAR var3
+    in(var1)
+    in(var2)
+    in(var3)
+    ;
 '''
 
 # entrada de teste para cond logical e relacional verdadeiro
@@ -233,7 +233,7 @@ main {
 }
 '''
 
-lexer.input(data3)
+lexer.input(data4)
 
 while True:
     tok = lexer.token()
