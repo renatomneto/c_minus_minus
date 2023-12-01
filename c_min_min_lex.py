@@ -101,7 +101,7 @@ t_LETRA = r"'\w'"
 # t_PALAVRA = r'[a-zA-Z][a-zA-Z_-]+'
 t_DIGITO = r'[0-9]'
 t_ASPAS = r'\"'
-t_NUMERO_INTEIRO = t_SUBTRACAO + r'*' + t_DIGITO + r'+'
+t_NUMERO_INTEIRO = t_DIGITO + r'+'
 t_TIPO = t_BOOL + r'|' + t_CHAR + r'|' + t_INT + r'|' + t_REAL
 t_NUMERO_REAL = t_NUMERO_INTEIRO + t_SEPARADOR + t_DIGITO + r'+'
 # t_VARIAVEL = t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
@@ -142,6 +142,8 @@ main:
     BOOL var3 = true
     BOOL var4 = false
     CHAR var5 = 'a'
+    INT var6 = -10
+    REAL var7 = -4.56
     ;
 '''
 # TESTE 2 -> Saida com Strings
@@ -167,7 +169,7 @@ main:
     ;
 '''
 
-# 
+# TESTE 4 -> Entrada de dados
 data4 = '''
 main:
     INT var1
@@ -181,16 +183,18 @@ main:
 
 # entrada de teste para cond logical e relacional verdadeiro
 data5 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3 + 4;
-    let variavel_char: char;
-    variavel_char = '3';
-    if(variavel_int == 7 && variavel_char == '3'){
-        variavel_int = variavel_int - 7;
-        output(variavel_int);
-    }
-}
+main:
+    REAL resultado1 = 5.0+4.0
+    REAL resultado2 = 5.0-4.0
+    REAL resultado3 = 5.0*4.0
+    REAL resultado4 = 5.0/4.0
+    REAL resultado5 = 5.0^4.0
+    out(resultado1)
+    out(resultado2)
+    out(resultado3)
+    out(resultado4)
+    out(resultado5)
+    ;
 '''
 
 # entrada de teste para cond logical e relacional falso com else
@@ -233,7 +237,7 @@ main {
 }
 '''
 
-lexer.input(data4)
+lexer.input(data1)
 
 while True:
     tok = lexer.token()

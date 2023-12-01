@@ -21,18 +21,18 @@ def hasInArray(name):
     return -1
 
 
-# precedence = (
-#     ('left', 'SUM', 'SUB'),
-#     ('left', 'MULT', 'DIV'),
-#     ('left', 'AND', 'OR'),
-#     ('right', 'NOT')
-# )
+precedence = (
+    ('left', 'SOMA', 'SUBTRACAO'),
+    ('left', 'MULTIPLICACAO', 'DIVISAO'),
+    ('left', 'AND', 'OR'),
+    ('right', 'NOT')
+)
 
 
 def p_main(p):
     'programa : MAIN INICIO_BLOCO exprs FIM_BLOCO'
     f = open("codigo_gerado.c", "w")
-    f.write(f"#include <stdio.h>\n#include <stdbool.h>\nint main(){{\n   {p[3]}\n   return 0;\n}}")
+    f.write(f"#include <stdio.h>\n#include <stdbool.h>\n#include <math.h>\nint main(){{\n   {p[3]}\n   return 0;\n}}")
     f.close()
 
 
@@ -50,14 +50,7 @@ def p_exprs_var(p):
     p[0] = p[1] + f";\n   "
 
 
-# def p_exprs_single(p):
-#     '''
-#         exprs : expr SEMICOLON 
-#     '''
-#     p[0] = p[1] + f";\n   "
-
-
-def p_expr_many_no_semicolon(p):
+def p_expr_varias(p):
     '''
         exprs : exprs expr  
     '''
@@ -129,23 +122,18 @@ def p_atribuicao_int(p):
     #onde {p[2]} é o nome da variavel e {p[4]} o valor
     p[0] = f'int {p[2]} = {p[4]}' 
 
-
-# def p_decl_let_int_attr(p):
-#     '''
-#     expr : LET VAR COLON INT ATTR LIT_INT
-#     '''
-#     myVariables.append(
-#         {'name': p[2], 'type': 'int', 'value': None, 'mutabilty': 'let'})
-#     p[0] = f'int {p[2]} = {p[6]}'
-
-
-# def p_decl_const_int_attr(p):
-#     '''
-#     expr : CONST VAR COLON INT ATTR LIT_INT
-#     '''
-#     myVariables.append(
-#         {'name': p[2], 'type': 'int', 'value': None, 'mutabilty': 'const'})
-#     p[0] = f'const int {p[2]} = {p[6]}'
+def p_atribuicao_int_negativo(p):
+    '''
+    expr : INT VARIAVEL ATRIBUICAO SUBTRACAO NUMERO_INTEIRO
+    '''
+    myVariables.append(
+        {'name': p[2], 'type': 'int', 'value': None})
+    if hasInArray(p[2]) != -1:
+        myVariables[hasInArray(p[2])]['value'] = p[5]
+    
+    #linha abaixo vai escrever a declaracao em C 
+    #onde {p[2]} é o nome da variavel e {p[4]} o valor
+    p[0] = f'int {p[2]} = -{p[5]}' 
 
 # =====================================================================
 # FUNCOES PARA REAL
@@ -174,24 +162,18 @@ def p_atribuicao_real(p):
     #onde {p[2]} é o nome da variavel e {p[4]} o valor
     p[0] = f'float {p[2]} = {p[4]}' 
 
-
-# def p_decl_let_float_attr(p):
-#     '''
-#     expr : LET VAR COLON FLOAT ATTR LIT_FLOAT
-#     '''
-#     myVariables.append(
-#         {'name': p[2], 'type': 'float', 'value': None, 'mutabilty': 'let'})
-#     p[0] = f'float {p[2]} = {p[6]}'
-
-
-# def p_decl_const_float_attr(p):
-#     '''
-#     expr : CONST VAR COLON FLOAT ATTR LIT_FLOAT
-#     '''
-#     myVariables.append(
-#         {'name': p[2], 'type': 'float', 'value': None, 'mutabilty': 'const'})
-#     p[0] = f'const float {p[2]} = {p[6]}'
-
+def p_atribuicao_real_negativo(p):
+    '''
+    expr : REAL VARIAVEL ATRIBUICAO SUBTRACAO NUMERO_REAL
+    '''
+    myVariables.append(
+        {'name': p[2], 'type': 'float', 'value': None})
+    if hasInArray(p[2]) != -1:
+        myVariables[hasInArray(p[2])]['value'] = p[5]
+    
+    #linha abaixo vai escrever a declaracao em C 
+    #onde {p[2]} é o nome da variavel e {p[4]} o valor
+    p[0] = f'float {p[2]} = -{p[5]}' 
 
 # =====================================================================
 # FUNCOES PARA CHAR
@@ -218,25 +200,6 @@ def p_atribuicao_char(p):
     #linha abaixo vai escrever a declaracao em C 
     #onde {p[2]} é o nome da variavel e {p[4]} o valor
     p[0] = f'char {p[2]} = {p[4]}'
-
-
-# def p_decl_let_char_attr(p):
-#     '''
-#     expr : LET VAR COLON CHAR ATTR LIT_CHAR
-#     '''
-#     myVariables.append(
-#         {'name': p[2], 'type': 'char', 'value': None, 'mutabilty': 'let'})
-#     p[0] = f'char {p[2]} = {p[6]}'
-
-
-# def p_decl_const_char_attr(p):
-#     '''
-#     expr : CONST VAR COLON CHAR ATTR LIT_CHAR
-#     '''
-#     myVariables.append(
-#         {'name': p[2], 'type': 'char', 'value': None, 'mutabilty': 'const'})
-#     p[0] = f'const char {p[2]} = {p[6]}'
-
 
 # =====================================================================
 # FUNCOES PARA BOOL
@@ -277,36 +240,40 @@ def p_atribuicao_bool_false(p):
     #onde {p[2]} é o nome da variavel e {p[4]} o valor
     p[0] = f'bool {p[2]} = {p[4]}'
 
+# =====================================================================
+# FUNCOES PARA OPERAÇÕES MATEMÁTICAS
+# =====================================================================
 
-# def p_attr(p):
-#     '''
-#     expr :  VAR ATTR expr
-#     '''
-#     if hasInArray(p[1]) != -1:
-#         myVariables[hasInArray(p[1])]['value'] = p[3]
-#     p[0] = f'{p[1]} = {p[3]}'
+def p_attr(p):
+    '''
+    expr :  VARIAVEL ATRIBUICAO expr
+    '''
+    if hasInArray(p[1]) != -1:
+        myVariables[hasInArray(p[1])]['value'] = p[3]
+    p[0] = f'{p[1]} = {p[3]}'
 
-
-# def p_expr_operations(p):
-#     '''
-#     expr : expr SUM expr
-#          | expr SUB expr
-#          | expr MULT expr
-#          | expr DIV expr
-#          | expr MOD expr
-#     '''
-
-#     match p[2]:
-#         case '+':
-#             p[0] = f"{p[1]} + {p[3]}"
-#         case '-':
-#             p[0] = f"{p[1]} - {p[3]}"
-#         case '*':
-#             p[0] = f"{p[1]} * {p[3]}"
-#         case '/':
-#             p[0] = f"{p[1]} / {p[3]}"
-#         case '%':
-#             p[0] = f"{p[1]} % {p[3]}"
+def p_expr_operacoesMat(p):
+    '''
+    expr : expr SOMA expr
+         | expr SUBTRACAO expr
+         | expr MULTIPLICACAO expr
+         | expr DIVISAO expr
+         | expr RESTO_DIVISAO expr
+         | expr POTENCIACAO expr
+    '''
+    match p[2]:
+        case '+':
+            p[0] = f"{p[1]} + {p[3]}"
+        case '-':
+            p[0] = f"{p[1]} - {p[3]}"
+        case '*':
+            p[0] = f"{p[1]} * {p[3]}"
+        case '/':
+            p[0] = f"{p[1]} / {p[3]}"
+        case '%':
+            p[0] = f"{p[1]} % {p[3]}"
+        case '^':
+            p[0] = f"pow({p[1]},{p[3]})"
 
 
 # def p_expr_relationals(p):
@@ -442,6 +409,8 @@ main:
     BOOL var3 = true
     BOOL var4 = false
     CHAR var5 = 'a'
+    INT var6 = -10
+    REAL var7 = -4.56
     ;
 '''
 
@@ -470,7 +439,7 @@ main:
     ;
 '''
 
-# 
+# TESTE 4 -> Entrada de dados
 data4 = '''
 main:
     INT var1
@@ -482,18 +451,20 @@ main:
     ;
 '''
 
-# entrada de teste para cond logical e relacional verdadeiro
+# 
 data5 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3 + 4;
-    let variavel_char: char;
-    variavel_char = '3';
-    if(variavel_int == 7 && variavel_char == '3'){
-        variavel_int = variavel_int - 7;
-        output(variavel_int);
-    }
-}
+main:
+    REAL resultado1 = 5.0+4.0
+    REAL resultado2 = 5.0-4.0
+    REAL resultado3 = 5.0*4.0
+    REAL resultado4 = 5.0/4.0
+    REAL resultado5 = 5.0^4.0
+    out(resultado1)
+    out(resultado2)
+    out(resultado3)
+    out(resultado4)
+    out(resultado5)
+    ;
 '''
 
 # entrada de teste para cond logical e relacional falso com else
@@ -536,4 +507,4 @@ main {
 }
 '''
 
-result = parser.parse(data4)
+result = parser.parse(data1)
