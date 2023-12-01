@@ -193,11 +193,13 @@ main:
     REAL resultado4 = 5.0/4.0
     REAL resultado5 
     resultado5 = 5.0^4.0
+    INT resultado6 = 4%3
     out(resultado1)
     out(resultado2)
     out(resultado3)
     out(resultado4)
     out(resultado5)
+    out(resultado6)
     ;
 '''
 
@@ -210,6 +212,8 @@ main:
     resultado1 = var1+var2
     out(resultado1)
     resultado1 = var1-var2
+    out(resultado1)
+    resultado1 = var2 % var1
     out(resultado1)
     REAL resultado2
     resultado2 = var1*var2
