@@ -181,14 +181,18 @@ main:
     ;
 '''
 
-# entrada de teste para cond logical e relacional verdadeiro
+# TESTE 5 -> Operacoes Matematicas Simples
+# OBS: potenciacao não pode ser feita como
+#   REAL resultado4 = 5.0^4.0
+# é necessário separar como no exemplo abaixo
 data5 = '''
 main:
-    REAL resultado1 = 5.0+4.0
+    INT resultado1 = 5+4
     REAL resultado2 = 5.0-4.0
     REAL resultado3 = 5.0*4.0
     REAL resultado4 = 5.0/4.0
-    REAL resultado5 = 5.0^4.0
+    REAL resultado5 
+    resultado5 = 5.0^4.0
     out(resultado1)
     out(resultado2)
     out(resultado3)
@@ -237,7 +241,7 @@ main {
 }
 '''
 
-lexer.input(data1)
+lexer.input(data5)
 
 while True:
     tok = lexer.token()
