@@ -107,7 +107,7 @@ t_NUMERO_REAL = t_NUMERO_INTEIRO + t_SEPARADOR + t_DIGITO + r'+'
 # t_VARIAVEL = t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
 
 def t_VARIAVEL(t):
-    r'[a-zA-Z]+([a-zA-Z_-]|[0-9])*' 
+    r'[a-zA-Z]+([a-zA-Z_]|[0-9])*' 
     t.type = reserved.get(t.value, 'VARIAVEL')
 
     return t
@@ -181,7 +181,7 @@ main:
     ;
 '''
 
-# TESTE 5 -> Operacoes Matematicas Simples
+# TESTE 5 -> Operacoes Matematicas1 
 # OBS: potenciacao não pode ser feita como
 #   REAL resultado4 = 5.0^4.0
 # é necessário separar como no exemplo abaixo
@@ -201,20 +201,24 @@ main:
     ;
 '''
 
-# entrada de teste para cond logical e relacional falso com else
+# TESTE 6 -> Operacoes Matematicas1 com variáveis
 data6 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3 + 4;
-    let variavel_char: char;
-    variavel_char = '3';
-    if(variavel_int == 7 && variavel_char == '2'){
-        variavel_int = variavel_int - 7;
-        output(variavel_int);
-    }else{
-        output(variavel_char);
-    }
-}
+main:
+    INT var1 = 2
+    INT var2 = 3
+    INT resultado1
+    resultado1 = var1+var2
+    out(resultado1)
+    resultado1 = var1-var2
+    out(resultado1)
+    REAL resultado2
+    resultado2 = var1*var2
+    out(resultado2)
+    resultado2 = var1/var2
+    out(resultado2)
+    resultado2 = var1^var2
+    out(resultado2)
+    ;
 '''
 
 # entrada de teste para while
@@ -241,7 +245,7 @@ main {
 }
 '''
 
-lexer.input(data5)
+lexer.input(data6)
 
 while True:
     tok = lexer.token()

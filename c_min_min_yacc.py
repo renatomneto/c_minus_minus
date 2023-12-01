@@ -252,7 +252,7 @@ def p_attr(p):
         myVariables[hasInArray(p[1])]['value'] = p[3]
     p[0] = f'{p[1]} = {p[3]}'
 
-def p_expr_operacoesMat(p):
+def p_expr_operacoesMat1(p):
     '''
     expr : expr SOMA expr
          | expr SUBTRACAO expr
@@ -260,6 +260,12 @@ def p_expr_operacoesMat(p):
          | expr DIVISAO expr
          | expr RESTO_DIVISAO expr
          | expr POTENCIACAO expr
+         | VARIAVEL SOMA VARIAVEL
+         | VARIAVEL SUBTRACAO VARIAVEL
+         | VARIAVEL MULTIPLICACAO VARIAVEL
+         | VARIAVEL DIVISAO VARIAVEL
+         | VARIAVEL RESTO_DIVISAO VARIAVEL
+         | VARIAVEL POTENCIACAO VARIAVEL
     '''
     match p[2]:
         case '+':
@@ -451,7 +457,7 @@ main:
     ;
 '''
 
-# TESTE 5 -> Operacoes Matematicas Simples
+# TESTE 5 -> Operacoes Matematicas1
 # OBS: potenciacao não pode ser feita como
 #   REAL resultado4 = 5.0^4.0
 # é necessário separar como no exemplo abaixo
@@ -471,21 +477,26 @@ main:
     ;
 '''
 
-# entrada de teste para cond logical e relacional falso com else
+# TESTE 6 -> Operacoes Matematicas1 com variáveis
 data6 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3 + 4;
-    let variavel_char: char;
-    variavel_char = '3';
-    if(variavel_int == 7 && variavel_char == '2'){
-        variavel_int = variavel_int - 7;
-        output(variavel_int);
-    }else{
-        output(variavel_char);
-    }
-}
+main:
+    INT var1 = 2
+    INT var2 = 3
+    INT resultado1
+    resultado1 = var1+var2
+    out(resultado1)
+    resultado1 = var1-var2
+    out(resultado1)
+    REAL resultado2
+    resultado2 = var1*var2
+    out(resultado2)
+    resultado2 = var1/var2
+    out(resultado2)
+    resultado2 = var1^var2
+    out(resultado2)
+    ;
 '''
+
 
 # entrada de teste para while
 data7 = '''
@@ -511,4 +522,4 @@ main {
 }
 '''
 
-result = parser.parse(data5)
+result = parser.parse(data6)
