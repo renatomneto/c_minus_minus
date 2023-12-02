@@ -23,6 +23,7 @@ reserved = {
     'equals': 'EQUALS',
     'dif': 'DIF',
     'if': 'IF',
+    'else': 'ELSE',
     'in': 'IN',
     'out': 'OUT',
     'true': 'TRUE',
@@ -63,7 +64,6 @@ tokens = [
     'ABRE_PARENTESES',
     'FECHA_PARENTESES',
     'TIPO', 
-    'ASPAS',
     'TEXTO'
 ] + list(reserved.values()) # adiciona os tokens das palavras reservadas
 
@@ -85,12 +85,7 @@ t_VIRGULA = r','
 t_AND = r'\band\b'
 t_OR = r'\bor\b'
 t_NOT = r'\bnot\b'
-# t_EQUALS = r'=='
 t_DIF = r'\bdif\b'
-# t_BIGGER = r'>'
-# t_SMALLER = r'<'
-# t_BEQ = r'>='
-# t_SEQ = r'<='
 t_TRUE = r'\btrue\b'
 t_FALSE = r'\bfalse\b'
 t_CHAR = r'\bCHAR\b'
@@ -100,11 +95,10 @@ t_BOOL = r'\bBOOL\b'
 t_LETRA = r"'\w'"
 # t_PALAVRA = r'[a-zA-Z][a-zA-Z_-]+'
 t_DIGITO = r'[0-9]'
-t_ASPAS = r'\"'
 t_NUMERO_INTEIRO = t_DIGITO + r'+'
 t_TIPO = t_BOOL + r'|' + t_CHAR + r'|' + t_INT + r'|' + t_REAL
 t_NUMERO_REAL = t_NUMERO_INTEIRO + t_SEPARADOR + t_DIGITO + r'+'
-# t_VARIAVEL = t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
+
 
 def t_VARIAVEL(t):
     r'[a-zA-Z]+([a-zA-Z_]|[0-9])*' 
@@ -113,7 +107,7 @@ def t_VARIAVEL(t):
     return t
 
 def t_TEXTO(t):
-    r'[a-zA-Z]+(([a-zA-Z_-]|[0-9])|[ ])+' 
+    r'\"([a-zA-Z]+[ ])+(([a-zA-Z_-]|[0-9])|\.|[ ])*\"' 
     t.type = reserved.get(t.value, 'TEXTO')
 
     return t
@@ -161,6 +155,7 @@ main:
     BOOL var3 = true
     BOOL var4 = false
     CHAR var5 = 'a'
+    out("Texto antes das variaveis")
     out(var1)
     out(var2)
     out(var3)
@@ -260,7 +255,32 @@ main:
 ;
 '''
 
-lexer.input(data9)
+# TESTE 10 -> if / else simples
+data10 = '''
+main:
+    INT var = 20
+    if(var smaller 10):
+        out("var menor que 10")
+    else
+        out("var maior que 10")
+    ;
+;
+'''
+
+# TESTE 11 -> if com 2 condiçoes / else 
+data11 = '''
+main:
+    INT var = 15
+    if((var bigger 10) and (var smaller 20)):
+        out("Maior que 10 e menor que 20")
+    ; 
+
+;
+'''
+# if((var smaller 10) or (var bigger 20)):
+#         out("Pode ser menor que 10 ou maior que 20")
+#     ;
+lexer.input(data11)
 
 while True:
     tok = lexer.token()

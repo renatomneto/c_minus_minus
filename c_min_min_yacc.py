@@ -40,7 +40,7 @@ def p_exprs_void(p):
     '''
     exprs :  
     '''
-    p[0] = ""
+    p[0] = ";"
 
 def p_exprs_newLine(p):
     '''
@@ -62,10 +62,14 @@ def p_expr_varias(p):
 
 def p_out_string(p):
     '''
-    expr : OUT ABRE_PARENTESES ASPAS TEXTO ASPAS FECHA_PARENTESES
+    expr : OUT ABRE_PARENTESES TEXTO FECHA_PARENTESES
     '''
-    if len(p) == 7:
-        p[0] = f'printf("{p[4]}\\n")'
+    # para diferenciar TEXTO e STRING e as saidas pularem linha sem
+    # corretamente ao transfomar o código em C
+    str = p[3]
+    str = str[: len(str)-1] # remove as " finais do TEXTO para inserir o \n abaixo
+    p[3] = str
+    p[0] = f'printf({p[3]}\\n")'
 
 
 def p_output_var(p):
@@ -296,12 +300,12 @@ def p_expr_relationals(p):
          | expr SMALLER expr
          | expr BEQ expr
          | expr SEQ expr
-         | term EQUALS expr
-         | term DIF expr
-         | term BIGGER expr
-         | term SMALLER expr
-         | term BEQ expr
-         | term SEQ expr
+         | VARIAVEL EQUALS expr
+         | VARIAVEL DIF expr
+         | VARIAVEL BIGGER expr
+         | VARIAVEL SMALLER expr
+         | VARIAVEL BEQ expr
+         | VARIAVEL SEQ expr
     '''
     match p[2]:
         case 'equals':
@@ -323,9 +327,9 @@ def p_expr_logicals(p):
     expr : expr AND expr
          | expr OR expr
          | NOT expr
-         | term AND expr
-         | term OR expr
-         | NOT term
+         | termcond AND termcond
+         | termcond OR termcond
+         | NOT termcond
     '''
 
     if p[1] == 'not':
@@ -338,18 +342,18 @@ def p_expr_logicals(p):
             p[0] = f"{p[1]} || {p[3]}"
 
 
-# def p_cond_if_only(p):
-#     '''
-#     expr : IF PAR_START exprs PAR_END BLOCK_START exprs BLOCK_END
-#     '''
-#     p[0] = f"if({p[3]}){{ \n {p[6]} \n }} "
+def p_cond_if(p):
+    '''
+    expr : IF ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
+    '''
+    p[0] = f"if({p[3]}){{ \n   {p[6]} \n   }} "
 
 
-# def p_cond_if_else(p):
-#     '''
-#     expr : IF PAR_START exprs PAR_END BLOCK_START exprs BLOCK_END ELSE BLOCK_START exprs BLOCK_END
-#     '''
-#     p[0] = f"if({p[3]}){{ \n {p[6]} \n }} else {{ \n {p[10]} }}"
+def p_cond_if_else(p):
+    '''
+    expr : IF ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs ELSE exprs FIM_BLOCO
+    '''
+    p[0] = f"if({p[3]}){{ \n    {p[6]} \n   }} else {{ \n     {p[8]} \n   }}"
 
 
 def p_while(p):
@@ -357,20 +361,6 @@ def p_while(p):
     expr : WHILE ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
     '''
     p[0] = f"while({p[3]}){{\n   {p[6]} \n   }}"
-
-
-# def p_exprs_for_no_semicolon(p):
-#     '''
-#     exprsfor : expr 
-#     '''
-#     p[0] = p[1]
-
-
-# def p_exprs_for_condicoes(p):
-#     '''
-#         exprsfor :  expr SEMICOLON exprsfor
-#     '''
-#     p[0] = p[1] + f"; " + p[3]
 
 
 def p_for(p):
@@ -416,9 +406,10 @@ def p_term_parenteses_expr(p):
     'term : ABRE_PARENTESES expr FECHA_PARENTESES'
     p[0] = f'({p[2]})'
 
-def p_term_variavel(p):
-    'term : VARIAVEL'
-    p[0] = p[1]
+def p_term_parenteses_exprcond(p):
+    'termcond : ABRE_PARENTESES exprs FECHA_PARENTESES'
+    p[0] = f'({p[2]})'
+    
 
 def p_error(t):
     if t is not None:
@@ -459,6 +450,7 @@ main:
     BOOL var3 = true
     BOOL var4 = false
     CHAR var5 = 'a'
+    out("Texto antes das variaveis")
     out(var1)
     out(var2)
     out(var3)
@@ -559,4 +551,26 @@ main:
 ;
 '''
 
-result = parser.parse(data9)
+# TESTE 10 -> if / else simples
+data10 = '''
+main:
+    INT var = 10
+    if(var smaller 10):
+        out("var menor que 10")
+    else
+        out("var maior que 10")
+    ;
+;
+'''
+
+# TESTE 11 -> if com 2 condiçoes / else 
+data11 = '''
+main:
+    INT var = 15
+    if((var bigger 10) and (var smaller 20)):
+        out("Maior que 10 e menor que 20")
+    ;  
+;
+'''
+
+result = parser.parse(data11)

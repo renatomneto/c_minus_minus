@@ -2,11 +2,11 @@
 #include <stdbool.h>
 #include <math.h>
 int main(){
-   int i = 0;
-   for(i; i < 10; i = i + 1){ 
-   printf("%d\n",i);
-     
-   };
+   int var = 15;
+   if((var > 10) && (var < 20)){ 
+   printf("Maior que 10 e menor que 20\n");
+    
+   } ;
    
    return 0;
 }
