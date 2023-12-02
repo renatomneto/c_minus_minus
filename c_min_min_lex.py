@@ -245,12 +245,22 @@ main:
     INT var = 0
     while(var dif 2):
         out(var)
-        var = (var + 1)
+        var = var + 1
     ;
 ;
 '''
 
-lexer.input(data8)
+# TESTE 9 -> for
+data9 = '''
+main:
+    INT i = 0
+    for(i, i smaller 10, i = i + 1):
+        out(i)
+    ;
+;
+'''
+
+lexer.input(data9)
 
 while True:
     tok = lexer.token()

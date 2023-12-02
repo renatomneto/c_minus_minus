@@ -356,7 +356,7 @@ def p_while(p):
     '''
     expr : WHILE ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
     '''
-    p[0] = f"while({p[3]}){{ \n {p[6]} \n }}"
+    p[0] = f"while({p[3]}){{\n   {p[6]} \n   }}"
 
 
 # def p_exprs_for_no_semicolon(p):
@@ -366,18 +366,18 @@ def p_while(p):
 #     p[0] = p[1]
 
 
-# def p_exprs_for_no_breakline(p):
+# def p_exprs_for_condicoes(p):
 #     '''
 #         exprsfor :  expr SEMICOLON exprsfor
 #     '''
 #     p[0] = p[1] + f"; " + p[3]
 
 
-# def p_for(p):
-#     '''
-#     expr : FOR PAR_START exprsfor PAR_END BLOCK_START exprs BLOCK_END
-#     '''
-#     p[0] = f"for({p[3]}){{ \n {p[6]}  }}"
+def p_for(p):
+    '''
+    expr : FOR ABRE_PARENTESES expr VIRGULA expr VIRGULA expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
+    '''
+    p[0] = f"for({p[3]}; {p[5]}; {p[7]}){{ \n   {p[10]}  \n   }}"
 
 
 def p_expr_term(p):
@@ -544,9 +544,19 @@ main:
     INT var = 0
     while(var dif 2):
         out(var)
-        var = (var + 1)
+        var = var + 1
     ;
 ;
 '''
 
-result = parser.parse(data8)
+# TESTE 9 -> for
+data9 = '''
+main:
+    INT i = 0
+    for(i, i smaller 10, i = i + 1):
+        out(i)
+    ;
+;
+'''
+
+result = parser.parse(data9)

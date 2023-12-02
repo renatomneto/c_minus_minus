@@ -2,12 +2,11 @@
 #include <stdbool.h>
 #include <math.h>
 int main(){
-   int var = 0;
-   while(var != 2){ 
- printf("%d\n",var);
-   var = (var + 1);
-    
- };
+   int i = 0;
+   for(i; i < 10; i = i + 1){ 
+   printf("%d\n",i);
+     
+   };
    
    return 0;
 }
