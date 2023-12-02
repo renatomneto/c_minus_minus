@@ -42,8 +42,7 @@ def p_exprs_void(p):
     '''
     p[0] = ""
 
-
-def p_exprs_var(p):
+def p_exprs_newLine(p):
     '''
     exprs : expr 
     '''
@@ -260,12 +259,19 @@ def p_expr_operacoesMat1(p):
          | expr DIVISAO expr
          | expr RESTO_DIVISAO expr
          | expr POTENCIACAO expr
+         | VARIAVEL SOMA expr
+         | VARIAVEL SUBTRACAO expr
+         | VARIAVEL MULTIPLICACAO expr
+         | VARIAVEL DIVISAO expr
+         | VARIAVEL RESTO_DIVISAO expr
+         | VARIAVEL POTENCIACAO expr
          | VARIAVEL SOMA VARIAVEL
          | VARIAVEL SUBTRACAO VARIAVEL
          | VARIAVEL MULTIPLICACAO VARIAVEL
          | VARIAVEL DIVISAO VARIAVEL
          | VARIAVEL RESTO_DIVISAO VARIAVEL
          | VARIAVEL POTENCIACAO VARIAVEL
+         
     '''
     match p[2]:
         case '+':
@@ -282,45 +288,54 @@ def p_expr_operacoesMat1(p):
             p[0] = f"pow({p[1]},{p[3]})"
 
 
-# def p_expr_relationals(p):
-#     '''
-#     expr : expr EQUALS expr
-#          | expr NOT_EQUALS expr
-#          | expr GREATER expr
-#          | expr SMALLER expr
-#          | expr GREATER_EQUALS expr
-#          | expr SMALLER_EQUALS expr
-#     '''
-#     match p[2]:
-#         case '==':
-#             p[0] = f"{p[1]} == {p[3]}"
-#         case '!=':
-#             p[0] = f"{p[1]} != {p[3]}"
-#         case '>':
-#             p[0] = f"{p[1]} > {p[3]}"
-#         case '<':
-#             p[0] = f"{p[1]} < {p[3]}"
-#         case '>=':
-#             p[0] = f"{p[1]} >= {p[3]}"
-#         case '<=':
-#             p[0] = f"{p[1]} <= {p[3]}"
+def p_expr_relationals(p):
+    '''
+    expr : expr EQUALS expr
+         | expr DIF expr
+         | expr BIGGER expr
+         | expr SMALLER expr
+         | expr BEQ expr
+         | expr SEQ expr
+         | term EQUALS expr
+         | term DIF expr
+         | term BIGGER expr
+         | term SMALLER expr
+         | term BEQ expr
+         | term SEQ expr
+    '''
+    match p[2]:
+        case 'equals':
+            p[0] = f"{p[1]} == {p[3]}"
+        case "dif":
+            p[0] = f"{p[1]} != {p[3]}"
+        case 'bigger':
+            p[0] = f"{p[1]} > {p[3]}"
+        case 'smaller':
+            p[0] = f"{p[1]} < {p[3]}"
+        case 'beq':
+            p[0] = f"{p[1]} >= {p[3]}"
+        case 'seq':
+            p[0] = f"{p[1]} <= {p[3]}"
 
 
-# def p_expr_logicals(p):
-#     '''
-#     expr : expr AND expr
-#          | expr OR expr
-#          | NOT expr
-#     '''
+def p_expr_logicals(p):
+    '''
+    expr : expr AND expr
+         | expr OR expr
+         | NOT expr
+         | term AND expr
+         | term OR expr
+         | NOT term
+    '''
 
-#     if p[1] == '!':
-#         p[0] = f"!{p[2]}"
+    if p[1] == 'not':
+        p[0] = f"!{p[2]}"
 
-#     match p[2]:
-#         case '&&':
-#             p[0] = f"{p[1]} && {p[3]}"
-#         case '||':
-#             p[0] = f"{p[1]} || {p[3]}"
+    match p[2]:
+        case 'and':
+            p[0] = f"{p[1]} && {p[3]}"
+        case 'or':
+            p[0] = f"{p[1]} || {p[3]}"
 
 
 # def p_cond_if_only(p):
@@ -337,11 +352,11 @@ def p_expr_operacoesMat1(p):
 #     p[0] = f"if({p[3]}){{ \n {p[6]} \n }} else {{ \n {p[10]} }}"
 
 
-# def p_while(p):
-#     '''
-#     expr : WHILE PAR_START exprs PAR_END BLOCK_START exprs BLOCK_END
-#     '''
-#     p[0] = f"while({p[3]}){{ \n {p[6]} \n }}"
+def p_while(p):
+    '''
+    expr : WHILE ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
+    '''
+    p[0] = f"while({p[3]}){{ \n {p[6]} \n }}"
 
 
 # def p_exprs_for_no_semicolon(p):
@@ -374,6 +389,10 @@ def p_term_char(p):
     'term : LETRA'
     p[0] = p[1]
 
+def p_term_digito(p):
+    'term : DIGITO'
+    p[0] = p[1]
+
 
 def p_term_bool_true(p):
     'term : TRUE'
@@ -397,6 +416,9 @@ def p_term_parenteses_expr(p):
     'term : ABRE_PARENTESES expr FECHA_PARENTESES'
     p[0] = f'({p[2]})'
 
+def p_term_variavel(p):
+    'term : VARIAVEL'
+    p[0] = p[1]
 
 def p_error(t):
     if t is not None:
@@ -502,7 +524,7 @@ main:
 '''
 
 
-# 
+# TESTE 7 -> Operacoes Matematicas2 e 3 
 data7 = '''
 main:
     INT var1 = 1
@@ -516,16 +538,15 @@ main:
     ;
 '''
 
-# entrada de teste para for
+# # TESTE 8 -> While
 data8 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3;
-    for(variavel_int = 3; variavel_int > 0; variavel_int = variavel_int - 1 ) {
-        output(variavel_int);
-        variavel_int = variavel_int + 1;
-    }
-}
+main:
+    INT var = 0
+    while(var dif 2):
+        out(var)
+        var = (var + 1)
+    ;
+;
 '''
 
-result = parser.parse(data7)
+result = parser.parse(data8)

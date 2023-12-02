@@ -85,12 +85,12 @@ t_VIRGULA = r','
 t_AND = r'\band\b'
 t_OR = r'\bor\b'
 t_NOT = r'\bnot\b'
-t_EQUALS = r'=='
-t_DIF = r'!='
-t_BIGGER = r'>'
-t_SMALLER = r'<'
-t_BEQ = r'>='
-t_SEQ = r'<='
+# t_EQUALS = r'=='
+t_DIF = r'\bdif\b'
+# t_BIGGER = r'>'
+# t_SMALLER = r'<'
+# t_BEQ = r'>='
+# t_SEQ = r'<='
 t_TRUE = r'\btrue\b'
 t_FALSE = r'\bfalse\b'
 t_CHAR = r'\bCHAR\b'
@@ -144,14 +144,14 @@ main:
     CHAR var5 = 'a'
     INT var6 = -10
     REAL var7 = -4.56
-    ;
+;
 '''
 # TESTE 2 -> Saida com Strings
 data2 = '''
 main:
     out("Hello World")
     out("Com duas linhas")
-    ;
+;
 '''
 # TESTE 3 -> Saida com Variáveis
 data3 = '''
@@ -166,7 +166,7 @@ main:
     out(var3)
     out(var4)
     out(var5)
-    ;
+;
 '''
 
 # TESTE 4 -> Entrada de dados
@@ -178,7 +178,7 @@ main:
     in(var1)
     in(var2)
     in(var3)
-    ;
+;
 '''
 
 # TESTE 5 -> Operacoes Matematicas1 
@@ -200,7 +200,7 @@ main:
     out(resultado4)
     out(resultado5)
     out(resultado6)
-    ;
+;
 '''
 
 # TESTE 6 -> Operacoes Matematicas1 com variáveis
@@ -222,10 +222,10 @@ main:
     out(resultado2)
     resultado2 = var1^var2
     out(resultado2)
-    ;
+;
 '''
 
-# 
+# TESTE 7 -> Operacoes Matematicas2 e 3 
 data7 = '''
 main:
     INT var1 = 1
@@ -236,22 +236,21 @@ main:
     INT resultado2
     resultado2 = (var1+var2)*(var1+var2)
     out(resultado2)
-    ;
+;
 '''
 
-# entrada de teste para for
+# TESTE 8 -> While
 data8 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3;
-    for(variavel_int = 3; variavel_int > 0; variavel_int = variavel_int - 1 ) {
-        output(variavel_int);
-        variavel_int = variavel_int + 1;
-    }
-}
+main:
+    INT var = 0
+    while(var dif 2):
+        out(var)
+        var = (var + 1)
+    ;
+;
 '''
 
-lexer.input(data7)
+lexer.input(data8)
 
 while True:
     tok = lexer.token()

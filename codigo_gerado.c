@@ -2,14 +2,12 @@
 #include <stdbool.h>
 #include <math.h>
 int main(){
-   int var1 = 1;
-   int var2 = 2;
-   int resultado;
-   resultado = (var1 + var2);
-   printf("%d\n",resultado);
-   int resultado2;
-   resultado2 = (var1 + var2) * (var1 + var2);
-   printf("%d\n",resultado2);
+   int var = 0;
+   while(var != 2){ 
+ printf("%d\n",var);
+   var = (var + 1);
+    
+ };
    
    return 0;
 }
