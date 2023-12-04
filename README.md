@@ -1,9 +1,9 @@
 # linguagem_c_minus_minus
  Projeto de linguagem de programação para a disciplina de Compiladores da Unifei
 
-=====================================================
+=======================================
 EXECUÇÃO DO CÓDIGO
-=====================================================
+=======================================
 
 1 - abra o terminal dentro da pasta com os arquivos c_min_min_lex.py e c_min_min_yacc.py;
 
