@@ -2,22 +2,11 @@
 #include <stdbool.h>
 #include <math.h>
 int main(){
-   int var1 = 2;
-   int var2 = 3;
-   int resultado1;
-   resultado1 = var1 + var2;
-   printf("%d\n",resultado1);
-   resultado1 = var1 - var2;
-   printf("%d\n",resultado1);
-   resultado1 = var2 % var1;
-   printf("%d\n",resultado1);
-   float resultado2;
-   resultado2 = var1 * var2;
-   printf("%f\n",resultado2);
-   resultado2 = var1 / var2;
-   printf("%f\n",resultado2);
-   resultado2 = pow(var1,var2);
-   printf("%f\n",resultado2);
+   int var = 15;
+   if((var > 10) && (var < 20)){ 
+   printf("Maior que 10 e menor que 20\n");
+    
+   } ;
    
    return 0;
 }

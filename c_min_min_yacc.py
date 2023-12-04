@@ -40,10 +40,9 @@ def p_exprs_void(p):
     '''
     exprs :  
     '''
-    p[0] = ""
+    p[0] = ";"
 
-
-def p_exprs_var(p):
+def p_exprs_newLine(p):
     '''
     exprs : expr 
     '''
@@ -63,10 +62,14 @@ def p_expr_varias(p):
 
 def p_out_string(p):
     '''
-    expr : OUT ABRE_PARENTESES ASPAS TEXTO ASPAS FECHA_PARENTESES
+    expr : OUT ABRE_PARENTESES TEXTO FECHA_PARENTESES
     '''
-    if len(p) == 7:
-        p[0] = f'printf("{p[4]}\\n")'
+    # para diferenciar TEXTO e STRING e as saidas pularem linha sem
+    # corretamente ao transfomar o código em C
+    str = p[3]
+    str = str[: len(str)-1] # remove as " finais do TEXTO para inserir o \n abaixo
+    p[3] = str
+    p[0] = f'printf({p[3]}\\n")'
 
 
 def p_output_var(p):
@@ -260,12 +263,19 @@ def p_expr_operacoesMat1(p):
          | expr DIVISAO expr
          | expr RESTO_DIVISAO expr
          | expr POTENCIACAO expr
+         | VARIAVEL SOMA expr
+         | VARIAVEL SUBTRACAO expr
+         | VARIAVEL MULTIPLICACAO expr
+         | VARIAVEL DIVISAO expr
+         | VARIAVEL RESTO_DIVISAO expr
+         | VARIAVEL POTENCIACAO expr
          | VARIAVEL SOMA VARIAVEL
          | VARIAVEL SUBTRACAO VARIAVEL
          | VARIAVEL MULTIPLICACAO VARIAVEL
          | VARIAVEL DIVISAO VARIAVEL
          | VARIAVEL RESTO_DIVISAO VARIAVEL
          | VARIAVEL POTENCIACAO VARIAVEL
+         
     '''
     match p[2]:
         case '+':
@@ -282,87 +292,82 @@ def p_expr_operacoesMat1(p):
             p[0] = f"pow({p[1]},{p[3]})"
 
 
-# def p_expr_relationals(p):
-#     '''
-#     expr : expr EQUALS expr
-#          | expr NOT_EQUALS expr
-#          | expr GREATER expr
-#          | expr SMALLER expr
-#          | expr GREATER_EQUALS expr
-#          | expr SMALLER_EQUALS expr
-#     '''
-#     match p[2]:
-#         case '==':
-#             p[0] = f"{p[1]} == {p[3]}"
-#         case '!=':
-#             p[0] = f"{p[1]} != {p[3]}"
-#         case '>':
-#             p[0] = f"{p[1]} > {p[3]}"
-#         case '<':
-#             p[0] = f"{p[1]} < {p[3]}"
-#         case '>=':
-#             p[0] = f"{p[1]} >= {p[3]}"
-#         case '<=':
-#             p[0] = f"{p[1]} <= {p[3]}"
+def p_expr_relationals(p):
+    '''
+    expr : expr EQUALS expr
+         | expr DIF expr
+         | expr BIGGER expr
+         | expr SMALLER expr
+         | expr BEQ expr
+         | expr SEQ expr
+         | VARIAVEL EQUALS expr
+         | VARIAVEL DIF expr
+         | VARIAVEL BIGGER expr
+         | VARIAVEL SMALLER expr
+         | VARIAVEL BEQ expr
+         | VARIAVEL SEQ expr
+    '''
+    match p[2]:
+        case 'equals':
+            p[0] = f"{p[1]} == {p[3]}"
+        case "dif":
+            p[0] = f"{p[1]} != {p[3]}"
+        case 'bigger':
+            p[0] = f"{p[1]} > {p[3]}"
+        case 'smaller':
+            p[0] = f"{p[1]} < {p[3]}"
+        case 'beq':
+            p[0] = f"{p[1]} >= {p[3]}"
+        case 'seq':
+            p[0] = f"{p[1]} <= {p[3]}"
 
 
-# def p_expr_logicals(p):
-#     '''
-#     expr : expr AND expr
-#          | expr OR expr
-#          | NOT expr
-#     '''
+def p_expr_logicals(p):
+    '''
+    expr : expr AND expr
+         | expr OR expr
+         | NOT expr
+         | termcond AND termcond
+         | termcond OR termcond
+         | NOT termcond
+    '''
 
-#     if p[1] == '!':
-#         p[0] = f"!{p[2]}"
+    if p[1] == 'not':
+        p[0] = f"!{p[2]}"
 
-#     match p[2]:
-#         case '&&':
-#             p[0] = f"{p[1]} && {p[3]}"
-#         case '||':
-#             p[0] = f"{p[1]} || {p[3]}"
-
-
-# def p_cond_if_only(p):
-#     '''
-#     expr : IF PAR_START exprs PAR_END BLOCK_START exprs BLOCK_END
-#     '''
-#     p[0] = f"if({p[3]}){{ \n {p[6]} \n }} "
+    match p[2]:
+        case 'and':
+            p[0] = f"{p[1]} && {p[3]}"
+        case 'or':
+            p[0] = f"{p[1]} || {p[3]}"
 
 
-# def p_cond_if_else(p):
-#     '''
-#     expr : IF PAR_START exprs PAR_END BLOCK_START exprs BLOCK_END ELSE BLOCK_START exprs BLOCK_END
-#     '''
-#     p[0] = f"if({p[3]}){{ \n {p[6]} \n }} else {{ \n {p[10]} }}"
+def p_cond_if(p):
+    '''
+    expr : IF ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
+    '''
+    p[0] = f"if({p[3]}){{ \n   {p[6]} \n   }} "
 
 
-# def p_while(p):
-#     '''
-#     expr : WHILE PAR_START exprs PAR_END BLOCK_START exprs BLOCK_END
-#     '''
-#     p[0] = f"while({p[3]}){{ \n {p[6]} \n }}"
+def p_cond_if_else(p):
+    '''
+    expr : IF ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs ELSE exprs FIM_BLOCO
+    '''
+    p[0] = f"if({p[3]}){{ \n    {p[6]} \n   }} else {{ \n     {p[8]} \n   }}"
 
 
-# def p_exprs_for_no_semicolon(p):
-#     '''
-#     exprsfor : expr 
-#     '''
-#     p[0] = p[1]
+def p_while(p):
+    '''
+    expr : WHILE ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
+    '''
+    p[0] = f"while({p[3]}){{\n   {p[6]} \n   }}"
 
 
-# def p_exprs_for_no_breakline(p):
-#     '''
-#         exprsfor :  expr SEMICOLON exprsfor
-#     '''
-#     p[0] = p[1] + f"; " + p[3]
-
-
-# def p_for(p):
-#     '''
-#     expr : FOR PAR_START exprsfor PAR_END BLOCK_START exprs BLOCK_END
-#     '''
-#     p[0] = f"for({p[3]}){{ \n {p[6]}  }}"
+def p_for(p):
+    '''
+    expr : FOR ABRE_PARENTESES expr VIRGULA expr VIRGULA expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
+    '''
+    p[0] = f"for({p[3]}; {p[5]}; {p[7]}){{ \n   {p[10]}  \n   }}"
 
 
 def p_expr_term(p):
@@ -372,6 +377,10 @@ def p_expr_term(p):
 
 def p_term_char(p):
     'term : LETRA'
+    p[0] = p[1]
+
+def p_term_digito(p):
+    'term : DIGITO'
     p[0] = p[1]
 
 
@@ -393,10 +402,14 @@ def p_term_real(p):
     p[0] = p[1]
 
 
-# def p_term_par_expr(p):
-#     'term : PAR_START expr PAR_END'
-#     p[0] = f'({p[2]})'
+def p_term_parenteses_expr(p):
+    'term : ABRE_PARENTESES expr FECHA_PARENTESES'
+    p[0] = f'({p[2]})'
 
+def p_term_parenteses_exprcond(p):
+    'termcond : ABRE_PARENTESES exprs FECHA_PARENTESES'
+    p[0] = f'({p[2]})'
+    
 
 def p_error(t):
     if t is not None:
@@ -437,6 +450,7 @@ main:
     BOOL var3 = true
     BOOL var4 = false
     CHAR var5 = 'a'
+    out("Texto antes das variaveis")
     out(var1)
     out(var2)
     out(var3)
@@ -502,28 +516,61 @@ main:
 '''
 
 
-# entrada de teste para while
+# TESTE 7 -> Operacoes Matematicas2 e 3 
 data7 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3;
-    while(variavel_int > 0 ){
-        output(variavel_int);
-        variavel_int = variavel_int - 1;
-    }
-}
+main:
+    INT var1 = 1
+    INT var2 = 2
+    INT resultado
+    resultado = (var1+var2)
+    out(resultado)
+    INT resultado2
+    resultado2 = (var1+var2)*(var1+var2)
+    out(resultado2)
+    ;
 '''
 
-# entrada de teste para for
+# # TESTE 8 -> While
 data8 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3;
-    for(variavel_int = 3; variavel_int > 0; variavel_int = variavel_int - 1 ) {
-        output(variavel_int);
-        variavel_int = variavel_int + 1;
-    }
-}
+main:
+    INT var = 0
+    while(var dif 2):
+        out(var)
+        var = var + 1
+    ;
+;
 '''
 
-result = parser.parse(data6)
+# TESTE 9 -> for
+data9 = '''
+main:
+    INT i = 0
+    for(i, i smaller 10, i = i + 1):
+        out(i)
+    ;
+;
+'''
+
+# TESTE 10 -> if / else simples
+data10 = '''
+main:
+    INT var = 10
+    if(var smaller 10):
+        out("var menor que 10")
+    else
+        out("var maior que 10")
+    ;
+;
+'''
+
+# TESTE 11 -> if com 2 condiçoes / else 
+data11 = '''
+main:
+    INT var = 15
+    if((var bigger 10) and (var smaller 20)):
+        out("Maior que 10 e menor que 20")
+    ;  
+;
+'''
+
+result = parser.parse(data11)

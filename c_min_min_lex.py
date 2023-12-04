@@ -23,6 +23,7 @@ reserved = {
     'equals': 'EQUALS',
     'dif': 'DIF',
     'if': 'IF',
+    'else': 'ELSE',
     'in': 'IN',
     'out': 'OUT',
     'true': 'TRUE',
@@ -63,7 +64,6 @@ tokens = [
     'ABRE_PARENTESES',
     'FECHA_PARENTESES',
     'TIPO', 
-    'ASPAS',
     'TEXTO'
 ] + list(reserved.values()) # adiciona os tokens das palavras reservadas
 
@@ -85,12 +85,7 @@ t_VIRGULA = r','
 t_AND = r'\band\b'
 t_OR = r'\bor\b'
 t_NOT = r'\bnot\b'
-t_EQUALS = r'=='
-t_DIF = r'!='
-t_BIGGER = r'>'
-t_SMALLER = r'<'
-t_BEQ = r'>='
-t_SEQ = r'<='
+t_DIF = r'\bdif\b'
 t_TRUE = r'\btrue\b'
 t_FALSE = r'\bfalse\b'
 t_CHAR = r'\bCHAR\b'
@@ -100,11 +95,10 @@ t_BOOL = r'\bBOOL\b'
 t_LETRA = r"'\w'"
 # t_PALAVRA = r'[a-zA-Z][a-zA-Z_-]+'
 t_DIGITO = r'[0-9]'
-t_ASPAS = r'\"'
 t_NUMERO_INTEIRO = t_DIGITO + r'+'
 t_TIPO = t_BOOL + r'|' + t_CHAR + r'|' + t_INT + r'|' + t_REAL
 t_NUMERO_REAL = t_NUMERO_INTEIRO + t_SEPARADOR + t_DIGITO + r'+'
-# t_VARIAVEL = t_TIPO + r' ((' + t_PALAVRA + r'|' + t_LETRA + r')(' + t_DIGITO + r'|' + t_LETRA + r')*'
+
 
 def t_VARIAVEL(t):
     r'[a-zA-Z]+([a-zA-Z_]|[0-9])*' 
@@ -113,7 +107,7 @@ def t_VARIAVEL(t):
     return t
 
 def t_TEXTO(t):
-    r'[a-zA-Z]+(([a-zA-Z_-]|[0-9])|[ ])+' 
+    r'\"([a-zA-Z]+[ ])+(([a-zA-Z_-]|[0-9])|\.|[ ])*\"' 
     t.type = reserved.get(t.value, 'TEXTO')
 
     return t
@@ -144,14 +138,14 @@ main:
     CHAR var5 = 'a'
     INT var6 = -10
     REAL var7 = -4.56
-    ;
+;
 '''
 # TESTE 2 -> Saida com Strings
 data2 = '''
 main:
     out("Hello World")
     out("Com duas linhas")
-    ;
+;
 '''
 # TESTE 3 -> Saida com Variáveis
 data3 = '''
@@ -161,12 +155,13 @@ main:
     BOOL var3 = true
     BOOL var4 = false
     CHAR var5 = 'a'
+    out("Texto antes das variaveis")
     out(var1)
     out(var2)
     out(var3)
     out(var4)
     out(var5)
-    ;
+;
 '''
 
 # TESTE 4 -> Entrada de dados
@@ -178,7 +173,7 @@ main:
     in(var1)
     in(var2)
     in(var3)
-    ;
+;
 '''
 
 # TESTE 5 -> Operacoes Matematicas1 
@@ -200,7 +195,7 @@ main:
     out(resultado4)
     out(resultado5)
     out(resultado6)
-    ;
+;
 '''
 
 # TESTE 6 -> Operacoes Matematicas1 com variáveis
@@ -222,34 +217,70 @@ main:
     out(resultado2)
     resultado2 = var1^var2
     out(resultado2)
-    ;
+;
 '''
 
-# entrada de teste para while
+# TESTE 7 -> Operacoes Matematicas2 e 3 
 data7 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3;
-    while(variavel_int > 0 ){
-        output(variavel_int);
-        variavel_int = variavel_int - 1;
-    }
-}
+main:
+    INT var1 = 1
+    INT var2 = 2
+    INT resultado
+    resultado = (var1+var2)
+    out(resultado)
+    INT resultado2
+    resultado2 = (var1+var2)*(var1+var2)
+    out(resultado2)
+;
 '''
 
-# entrada de teste para for
+# TESTE 8 -> While
 data8 = '''
-main {
-    let variavel_int: int;
-    variavel_int = 3;
-    for(variavel_int = 3; variavel_int > 0; variavel_int = variavel_int - 1 ) {
-        output(variavel_int);
-        variavel_int = variavel_int + 1;
-    }
-}
+main:
+    INT var = 0
+    while(var dif 2):
+        out(var)
+        var = var + 1
+    ;
+;
 '''
 
-lexer.input(data6)
+# TESTE 9 -> for
+data9 = '''
+main:
+    INT i = 0
+    for(i, i smaller 10, i = i + 1):
+        out(i)
+    ;
+;
+'''
+
+# TESTE 10 -> if / else simples
+data10 = '''
+main:
+    INT var = 20
+    if(var smaller 10):
+        out("var menor que 10")
+    else
+        out("var maior que 10")
+    ;
+;
+'''
+
+# TESTE 11 -> if com 2 condiçoes / else 
+data11 = '''
+main:
+    INT var = 15
+    if((var bigger 10) and (var smaller 20)):
+        out("Maior que 10 e menor que 20")
+    ; 
+
+;
+'''
+# if((var smaller 10) or (var bigger 20)):
+#         out("Pode ser menor que 10 ou maior que 20")
+#     ;
+lexer.input(data11)
 
 while True:
     tok = lexer.token()
