@@ -5,7 +5,7 @@
 
 import ply.yacc as yacc
 
-from c_min_min_lex import tokens
+from c_min_min_lex import tokens, opcao
 
 myVariables = []
 # boolStack = []
@@ -40,7 +40,7 @@ def p_exprs_void(p):
     '''
     exprs :  
     '''
-    p[0] = ";"
+    p[0] = ""
 
 def p_exprs_newLine(p):
     '''
@@ -99,6 +99,7 @@ def p_input_var(p):
         if (myVariables[hasInArray(p[3])]['type'] == 'char'):
             p[0] = f'scanf(" %c", &{p[3]})'
 
+
 # =====================================================================
 # FUNCOES PARA INT
 # =====================================================================
@@ -138,10 +139,10 @@ def p_atribuicao_int_negativo(p):
     #onde {p[2]} é o nome da variavel e {p[4]} o valor
     p[0] = f'int {p[2]} = -{p[5]}' 
 
+
 # =====================================================================
 # FUNCOES PARA REAL
 # =====================================================================
-
 
 def p_declaracao_real(p):
     '''
@@ -275,7 +276,12 @@ def p_expr_operacoesMat1(p):
          | VARIAVEL DIVISAO VARIAVEL
          | VARIAVEL RESTO_DIVISAO VARIAVEL
          | VARIAVEL POTENCIACAO VARIAVEL
-         
+         | expr SOMA VARIAVEL
+         | expr SUBTRACAO VARIAVEL
+         | expr MULTIPLICACAO VARIAVEL
+         | expr DIVISAO VARIAVEL
+         | expr RESTO_DIVISAO VARIAVEL
+         | expr POTENCIACAO VARIAVEL
     '''
     match p[2]:
         case '+':
@@ -291,6 +297,10 @@ def p_expr_operacoesMat1(p):
         case '^':
             p[0] = f"pow({p[1]},{p[3]})"
 
+
+# =====================================================================
+# FUNCOES PARA OPERACOES RELACIONAIS
+# =====================================================================
 
 def p_expr_relationals(p):
     '''
@@ -322,6 +332,10 @@ def p_expr_relationals(p):
             p[0] = f"{p[1]} <= {p[3]}"
 
 
+# =====================================================================
+# FUNCOES PARA OPERACOES LOGICAS
+# =====================================================================
+
 def p_expr_logicals(p):
     '''
     expr : expr AND expr
@@ -342,6 +356,10 @@ def p_expr_logicals(p):
             p[0] = f"{p[1]} || {p[3]}"
 
 
+# =====================================================================
+# FUNCOES PARA IF / ELSE
+# =====================================================================
+
 def p_cond_if(p):
     '''
     expr : IF ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
@@ -356,6 +374,10 @@ def p_cond_if_else(p):
     p[0] = f"if({p[3]}){{ \n    {p[6]} \n   }} else {{ \n     {p[8]} \n   }}"
 
 
+# =====================================================================
+# FUNCOES PARA WHILE
+# =====================================================================
+
 def p_while(p):
     '''
     expr : WHILE ABRE_PARENTESES expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
@@ -363,6 +385,9 @@ def p_while(p):
     p[0] = f"while({p[3]}){{\n   {p[6]} \n   }}"
 
 
+# =====================================================================
+# FUNCOES PARA FOR
+# =====================================================================
 def p_for(p):
     '''
     expr : FOR ABRE_PARENTESES expr VIRGULA expr VIRGULA expr FECHA_PARENTESES INICIO_BLOCO exprs FIM_BLOCO
@@ -370,6 +395,9 @@ def p_for(p):
     p[0] = f"for({p[3]}; {p[5]}; {p[7]}){{ \n   {p[10]}  \n   }}"
 
 
+# =====================================================================
+# FUNCOES PARA TERM
+# =====================================================================
 def p_expr_term(p):
     'expr : term'
     p[0] = p[1]
@@ -401,6 +429,9 @@ def p_term_real(p):
     'term : NUMERO_REAL'
     p[0] = p[1]
 
+def p_term_variavel(p):
+    'term : VARIAVEL'
+    p[0] = p[1]
 
 def p_term_parenteses_expr(p):
     'term : ABRE_PARENTESES expr FECHA_PARENTESES'
@@ -419,6 +450,11 @@ def p_error(t):
 parser = yacc.yacc()
 
 print('\n----- fim codigo -----\n')
+
+
+# =====================================================================
+# CODIGOS EXEMPLOS 
+# =====================================================================
 
 # TESTE 1 -> Declarando varaiveis
 data1 = '''
@@ -465,6 +501,7 @@ main:
     INT var1
     REAL var2
     CHAR var3
+    out("Digite as variaveis")
     in(var1)
     in(var2)
     in(var3)
@@ -573,4 +610,63 @@ main:
 ;
 '''
 
-result = parser.parse(data11)
+# TESTE 12 -> Fibonacci
+data12 = '''
+main:
+    INT a=0
+    INT b=1
+    INT entrada
+    INT aux=0
+    INT i=0
+
+    out("Entar com o numero de fibonacci desejado: ")
+    in(entrada)
+
+    out(a)
+    out(b)
+
+    while(i smaller entrada):
+        i = i+1
+        aux = a+b
+        a = b
+        b = aux
+        out(b)
+    ;
+;
+'''
+
+# TESTE 13 -> Precedence
+data13 = '''
+main:
+    INT aa=5
+    INT bb=2
+    REAL pi=3.1415
+
+    REAL res
+    res = aa+bb*pi
+    out(res)
+    res = (aa+bb)*pi
+    out(res)
+    res = bb*pi+aa
+    out(res)
+    res = bb*(pi+aa)
+    out(res)
+;
+
+'''
+
+# Exemplo codigo alvo para a linguagem
+objetivo = '''
+main:
+    INT num = 5
+    if(num smaller 10 and num bigger 1):
+        out("Hello World")
+    ;  
+;
+'''
+# result = parser.parse(data12)
+match opcao:
+        case 1:
+            result = parser.parse(data12)
+        case 2:
+            result = parser.parse(data13)

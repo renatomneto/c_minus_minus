@@ -2,11 +2,18 @@
 #include <stdbool.h>
 #include <math.h>
 int main(){
-   int var = 15;
-   if((var > 10) && (var < 20)){ 
-   printf("Maior que 10 e menor que 20\n");
-    
-   } ;
+   int aa = 5;
+   int bb = 2;
+   float pi = 3.1415;
+   float res;
+   res = aa + bb * pi;
+   printf("%f\n",res);
+   res = (aa + bb) * pi;
+   printf("%f\n",res);
+   res = bb * pi + aa;
+   printf("%f\n",res);
+   res = bb * (pi + aa);
+   printf("%f\n",res);
    
    return 0;
 }
