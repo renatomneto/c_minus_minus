@@ -2,18 +2,23 @@
 #include <stdbool.h>
 #include <math.h>
 int main(){
-   int aa = 5;
-   int bb = 2;
-   float pi = 3.1415;
-   float res;
-   res = aa + bb * pi;
-   printf("%f\n",res);
-   res = (aa + bb) * pi;
-   printf("%f\n",res);
-   res = bb * pi + aa;
-   printf("%f\n",res);
-   res = bb * (pi + aa);
-   printf("%f\n",res);
+   int a = 0;
+   int b = 1;
+   int entrada;
+   int aux = 0;
+   int i = 0;
+   printf("Entar com o numero de fibonacci desejado: \n");
+   scanf("%d", &entrada);
+   printf("%d\n",a);
+   printf("%d\n",b);
+   while(i < (entrada - 2)){
+   i = i + 1;
+   aux = a + b;
+   a = b;
+   b = aux;
+   printf("%d\n",b);
+    
+   };
    
    return 0;
 }

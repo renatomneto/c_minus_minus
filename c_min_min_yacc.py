@@ -625,7 +625,7 @@ main:
     out(a)
     out(b)
 
-    while(i smaller entrada):
+    while(i smaller (entrada-2)):
         i = i+1
         aux = a+b
         a = b
