@@ -32,7 +32,6 @@ reserved = {
 
 # TOKENS
 tokens = [
-    # 'MAIN',
     'OPERACOES',
     'CONDICAO',
     'VARIAVEL',
@@ -93,7 +92,6 @@ t_INT = r'\bINT\b'
 t_REAL = r'\bREAL\b'
 t_BOOL = r'\bBOOL\b'
 t_LETRA = r"'\w'"
-# t_PALAVRA = r'[a-zA-Z][a-zA-Z_-]+'
 t_DIGITO = r'[0-9]'
 t_NUMERO_INTEIRO = t_DIGITO + r'+'
 t_TIPO = t_BOOL + r'|' + t_CHAR + r'|' + t_INT + r'|' + t_REAL
@@ -107,7 +105,7 @@ def t_VARIAVEL(t):
     return t
 
 def t_TEXTO(t):
-    r'\"([a-zA-Z]+[ ])+(([a-zA-Z_-]|[0-9])|\.|[ ])*\"' 
+    r'\"([a-zA-Z]+[ ])+(([a-zA-Z_-]|[0-9])|\.|\:|[ ])*\"' 
     t.type = reserved.get(t.value, 'TEXTO')
 
     return t
@@ -170,10 +168,11 @@ main:
     INT var1
     REAL var2
     CHAR var3
+    out("Digite as variaveis")
     in(var1)
     in(var2)
     in(var3)
-;
+    ;
 '''
 
 # TESTE 5 -> Operacoes Matematicas1 
@@ -277,10 +276,78 @@ main:
 
 ;
 '''
-# if((var smaller 10) or (var bigger 20)):
-#         out("Pode ser menor que 10 ou maior que 20")
-#     ;
-lexer.input(data11)
+
+# TESTE 12 -> Fibonacci
+data12 = '''
+main:
+    INT a=0
+    INT b=1
+    INT entrada
+    INT aux=0
+    INT i=0
+
+    out("Entar com o numero de fibonacci desejado: ")
+    in(entrada)
+
+    out(a)
+    out(b)
+
+    while(i smaller entrada):
+        i = i+1
+        aux = a+b
+        a = b
+        b = aux
+        out(b)
+    ;
+;
+'''
+
+# TESTE 13 -> Precedence
+data13 = '''
+main:
+    INT aa=5
+    INT bb=2
+    REAL pi=3.1415
+
+    REAL res
+    res = aa+bb*pi
+    out(res)
+    res = (aa+bb)*pi
+    out(res)
+    res = bb*pi+aa
+    out(res)
+    res = bb*(pi+aa)
+    out(res)
+;
+'''
+
+# Exemplo codigo alvo para a linguagem
+objetivo = '''
+main:
+    INT num = 5
+    if(num smaller 10 and num bigger 1):
+        out("Hello World")
+    ;  
+;
+'''
+
+print("Escolha uma opcao de código exemplo para ser transformado para C")
+print("1) Fibonacci")
+print(data12)
+print("2) Precedence Test") 
+print(data13)
+
+opcao = int(input("Digite a opcao: ")) 
+
+match opcao:
+        case 1:
+            lexer.input(data12)
+        case 2:
+            lexer.input(data13)
+        case _:
+           print("Opcao invalida")  
+
+# lexer.input(data12)
 
 while True:
     tok = lexer.token()
